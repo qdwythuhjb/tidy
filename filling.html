@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fill in Your Details - Kutlwano Luka</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image : url('image.jpg');
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #ff69b4;
+            margin-bottom: 20px;
+        }
+        form {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #ff69b4;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            background-color: #ff1493;
+        }
+        .education, .work-experience {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Fill in Your Details</h1>
+    <form id="cvForm">
+        <label for="name">Name</label>
+        <input type="text" id="name" required>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" required>
+
+        <label for="phone">Phone</label>
+        <input type="tel" id="phone" required>
+
+        <div id="educationContainer">
+            <label>Education</label>
+            <div class="education">
+                <textarea class="educationInput" rows="3" required></textarea>
+            </div>
+            <button type="button" id="addEducation" class="btn">Add More Education</button>
+        </div>
+
+        <div id="workExperienceContainer">
+            <label>Work Experience</label>
+            <div class="work-experience">
+                <textarea class="workExperienceInput" rows="3" required></textarea>
+            </div>
+            <button type="button" id="addWorkExperience" class="btn">Add More Work Experience</button>
+        </div>
+
+        <label for="skills">Skills</label>
+        <textarea id="skills" rows="3" required></textarea>
+
+        <button type="submit" class="btn">Save and View CV</button>
+    </form>
+
+    <script>
+        const cvForm = document.getElementById('cvForm');
+        const educationContainer = document.getElementById('educationContainer');
+        const workExperienceContainer = document.getElementById('workExperienceContainer');
+        const addEducationButton = document.getElementById('addEducation');
+        const addWorkExperienceButton = document.getElementById('addWorkExperience');
+
+        // Load existing data from localStorage
+        window.onload = function() {
+            const cvData = JSON.parse(localStorage.getItem('cvData'));
+            if (cvData) {
+                document.getElementById('name').value = cvData.name || '';
+                document.getElementById('email').value = cvData.email || '';
+                document.getElementById('phone').value = cvData.phone || '';
+                document.getElementById('skills').value = cvData.skills || '';
+
+                // Load education inputs
+                if (cvData.education) {
+                    cvData.education.forEach(edu => addEducationInput(edu));
+                }
+
+                // Load work experience inputs
+                if (cvData.workExperience) {
+                    cvData.workExperience.forEach(work => addWorkExperienceInput(work));
+                }
+            }
+        };
+
+        addEducationButton.addEventListener('click', function() {
+            addEducationInput('');
+        });
+
+        addWorkExperienceButton.addEventListener('click', function() {
+            addWorkExperienceInput('');
+        });
+
+        function addEducationInput(value) {
+            const newEducationInput = document.createElement('textarea');
+            newEducationInput.className = 'educationInput';
+            newEducationInput.rows = 3;
+            newEducationInput.placeholder = 'Enter education details';
+            newEducationInput.value = value;
+            educationContainer.insertBefore(newEducationInput, addEducationButton);
+        }
+
+        function addWorkExperienceInput(value) {
+            const newWorkExperienceInput = document.createElement('textarea');
+            newWorkExperienceInput.className = 'workExperienceInput';
+            newWorkExperienceInput.rows = 3;
+            newWorkExperienceInput.placeholder = 'Enter work experience details';
+            newWorkExperienceInput.value = value;
+            workExperienceContainer.insertBefore(newWorkExperienceInput, addWorkExperienceButton);
+        }
+
+        cvForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const skills = document.getElementById('skills').value;
+
+            // Gather education and work experience inputs
+            const educationInputs = document.querySelectorAll('.educationInput');
+            const workExperienceInputs = document.querySelectorAll('.workExperienceInput');
+
+            const education = Array.from(educationInputs).map(input => input.value);
+            const workExperience = Array.from(workExperienceInputs).map(input => input.value);
+
+            const cvData = {
+                name,
+                email,
+                phone,
+                education,
+                workExperience,
+                skills,
+            };
+
+            localStorage.setItem('cvData', JSON.stringify(cvData));
+            window.location.href = 'view.html'; // Redirect to view page
+        });
+    </script>
+</body>
+</html>
